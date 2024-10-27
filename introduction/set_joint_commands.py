@@ -22,6 +22,12 @@ class MyAgent(SparkAgent):
         action = super(MyAgent, self).think(perception)
         # YOUR CODE HERE
 
+        action.stiffness["LShoulderPitch"] = 0
+        action.speed["HeadYaw"] = 0.1
+
+        print(f'Set LShoulderPitch stiffness to: {action.stiffness["LShoulderPitch"]}')
+        print(f'Set HeadYaw speed to: {action.speed["HeadYaw"]}')
+
         return action
 
 if '__main__' == __name__:
