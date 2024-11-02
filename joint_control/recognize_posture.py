@@ -39,7 +39,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
             'AngleX', 'AngleY'
         ]
         posture_labels = [
-            'Back', 'Belly', 'Belly', 'Frog', 'HeadBack', 'Knee',
+            'Back', 'Belly', 'Crouch', 'Frog', 'HeadBack', 'Knee',
             'Left', 'Right', 'Sit', 'Stand', 'StandInit'
         ]
 
