@@ -37,8 +37,8 @@ class PIDController(object):
         # ADJUST PARAMETERS BELOW
 
         delay = 0 # kein delay im mottoren signal (angle(t) = angle(t-1) + speed * dt)
-        self.Kp = 2.0  # Proportionaler Verstärkungsfaktor, 2.0 moderater Wert
-        self.Ki = 0.5  # Integraler Verstärkungsfaktor, zu hoch führt zu Instabilität
+        self.Kp = 27.0  # Proportionaler Verstärkungsfaktor, 2.0 moderater Wert
+        self.Ki = 0.1  # Integraler Verstärkungsfaktor, zu hoch führt zu Instabilität
         self.Kd = 0.1  # Differentialer Verstärkungsfaktor, ein zu hoher wert kann das system empfindlich gegenüber messrauschen machen
         self.y = deque(np.zeros(size), maxlen=delay + 1)
 
@@ -104,5 +104,5 @@ class PIDAgent(SparkAgent):
 
 if __name__ == '__main__':
     agent = PIDAgent()
-    agent.target_joints['HeadYaw'] = 1.0
+    agent.target_joints['HeadYaw'] = 2.0
     agent.run()
