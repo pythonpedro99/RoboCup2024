@@ -33,18 +33,20 @@ class PIDController(object):
         self.u = np.zeros(size)
         self.e1 = np.zeros(size)
         self.e2 = np.zeros(size)
+        self.integral = np.zeros(size) # ??
         # ADJUST PARAMETERS BELOW
-        delay = 0
-        self.Kp = 0
-        self.Ki = 0
-        self.Kd = 0
+
+        delay = 0 # kein delay im mottoren signal (angle(t) = angle(t-1) + speed * dt)
+        self.Kp = 2.0  # Proportionaler Verstärkungsfaktor, 2.0 moderater Wert
+        self.Ki = 0.5  # Integraler Verstärkungsfaktor, zu hoch führt zu Instabilität
+        self.Kd = 0.1  # Differentialer Verstärkungsfaktor, ein zu hoher wert kann das system empfindlich gegenüber messrauschen machen
         self.y = deque(np.zeros(size), maxlen=delay + 1)
 
     def set_delay(self, delay):
         '''
         @param delay: delay in number of steps
         '''
-        self.y = deque(self.y, delay + 1)
+        self.y = deque(self.y, delay + 1) # self.y == 1
 
     def control(self, target, sensor):
         '''apply PID control
@@ -52,7 +54,24 @@ class PIDController(object):
         @param sensor: current values from sensor
         @return control signal
         '''
+
         # YOUR CODE HERE
+
+        prediction = sensor.copy()
+        for _ in range(len(self.y) - 1):
+            prediction += self.u * self.dt  # angle(t) = angle(t-1) + speed * dt
+            self.y.append(prediction)
+
+        error = target - prediction
+        self.integral += error * self.dt
+        derivative = (error - self.e1) / self.dt
+
+        # PID rule
+        self.u = self.Kp * error + self.Ki * self.integral + self.Kd * derivative
+
+        # Vorherige Fehlerwerte aktualisieren
+        self.e2 = self.e1.copy()
+        self.e1 = error.copy()
 
         return self.u
 

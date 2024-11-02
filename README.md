@@ -16,6 +16,10 @@ pip install -r packages.txt
 cd software_installation
 python spark_agent.py
 
+# launch Jupyter notebook
+jupyter notebook
+
+
 ```
 
 
