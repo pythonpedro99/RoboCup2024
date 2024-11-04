@@ -35,9 +35,10 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         # used by the model
         joint_names = [
             'LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch',
-            'RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch',
-            'AngleX', 'AngleY'
+            'RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch'
         ]
+        imu_names  = ['AngleX', 'AngleY']
+
         posture_labels = [
             'Back', 'Belly', 'Crouch', 'Frog', 'HeadBack', 'Knee',
             'Left', 'Right', 'Sit', 'Stand', 'StandInit'
@@ -48,11 +49,16 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
         for joint_name in joint_names:
             angle = perception.joint.get(joint_name, 0.0)
             joint_angles.append(angle)
+        for i in range(2):
+            angle = perception.imu[i]
+            joint_angles.append(angle)
+
 
 
         joint_angles_array = np.array(joint_angles).reshape(1, -1) # rehape for model
         prediction = self.posture_classifier.predict(joint_angles_array) # let model predict
         predicted_class_index = np.argmax(prediction, axis=1)[0] # get max out of the distribution
+        print(predicted_class_index)
         posture = posture_labels[predicted_class_index]
 
 

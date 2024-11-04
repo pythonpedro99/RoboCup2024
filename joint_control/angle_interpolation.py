@@ -18,10 +18,22 @@
     # to the angle and time of the point. The first Bezier param describes the handle that controls the curve
     # preceding the point, the second describes the curve following the point.
 '''
+from jedi.inference.recursion import total_function_execution_limit
+
 from joint_control.keyframes import wipe_forehead, rightBackToStand
 from pid import PIDAgent
 from keyframes import hello
-import time
+
+
+
+def bezier_interpolation(t, p0, p1, p2, p3):
+    angle = (
+            (1 - t) ** 3 * p0 +
+            3 * (1 - t) ** 2 * t * p1 +
+            3 * (1 - t) * t ** 2 * p2 +
+            t ** 3 * p3
+    )
+    return angle
 
 
 class AngleInterpolationAgent(PIDAgent):
@@ -40,47 +52,54 @@ class AngleInterpolationAgent(PIDAgent):
         self.target_joints.update(target_joints)
         return super(AngleInterpolationAgent, self).think(perception)
 
-    def bezier_interpolation(self, t, key_points):
-        return (
-            (1 - t) ** 3 * key_points[0] +
-            3 * (1 - t) ** 2 * t * key_points[1] +
-            3 * (1 - t) * t ** 2 * key_points[2] +
-            t ** 3 * key_points[3]
-        )
-
     def angle_interpolation(self, keyframes, perception):
-        joints, times, keys = keyframes  # Unpack keyframes
-        target_joints = {} # initialize for later use
+        joints, times, keys = keyframes
+        target_joints = {}
+
+        if not times or not keys:
+            return target_joints
+
+        # end of the keyframe
+        total_duration = max(max(joint_times) for joint_times in times if joint_times)
+
+        # scale the perception time
+        scaled_perception_time = perception.time % total_duration
 
         for joint_index, joint_name in enumerate(joints):
             joint_times = times[joint_index]
             joint_keys = keys[joint_index]
-            if not joint_times:
-                continue
 
 
             for i in range(len(joint_times) - 1):
-                if joint_times[i] <= perception.time <= joint_times[i + 1]:
-                    t = (perception.time - joint_times[i]) / (joint_times[i + 1] - joint_times[i]) # select interpolation window
-                    P0 = joint_keys[i][0]
-                    handle1 = joint_keys[i][1]
-                    handle2 = joint_keys[i][2]
-                    P1 = P0 + handle1[2]
-                    P2 = joint_keys[i + 1][0] + handle2[2]
-                    P3 = joint_keys[i + 1][0]
+                t_start = joint_times[i]
+                t_end = joint_times[i + 1]
+                if t_start <= scaled_perception_time <= t_end:
 
-                    # Perform Bezier interpolation
-                    angle = self.bezier_interpolation(t, [P0, P1, P2, P3])
-                    target_joints[joint_name] = angle
+
+                    p0 = joint_keys[i][0]
+
+                    p3 = joint_keys[i + 1][0]
+
+                    if len(joint_keys[i]) >1:
+                        _,_, handle1_angle = joint_keys[i][1]
+                        _,_,handle2_angle = joint_keys[i+1][2]
+                        p1 = p0 + handle1_angle
+                        p2 = p3 + handle2_angle
+                    else:
+                        p1 = p0 + (p3 -p0)
+                        p2 = p3 + (p3 -p0)
+
+                    # normalize time for the interpolation
+                    e_time = scaled_perception_time - t_start
+                    total_time = t_end - t_start
+                    time = e_time / total_time
+                    target_joints[joint_name] = bezier_interpolation(time,p0,p1,p2,p3)
                     break
-            else:
-                # If current time is beyond last keyframe, hold the last position
-                target_joints[joint_name] = joint_keys[-1][0]
-        return target_joints
 
+        return target_joints
 
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
-    agent.keyframes = rightBackToStand()  # CHANGE DIFFERENT KEYFRAMES
+    agent.keyframes = hello()  # CHANGE DIFFERENT KEYFRAMES
     agent.run()
