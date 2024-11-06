@@ -20,7 +20,7 @@
 '''
 from jedi.inference.recursion import total_function_execution_limit
 
-from joint_control.keyframes import wipe_forehead, rightBackToStand
+from joint_control.keyframes import wipe_forehead, rightBackToStand, leftBellyToStand, leftBackToStand
 from pid import PIDAgent
 from keyframes import hello
 
@@ -44,11 +44,11 @@ class AngleInterpolationAgent(PIDAgent):
                  sync_mode=True):
         super(AngleInterpolationAgent, self).__init__(simspark_ip, simspark_port, teamname, player_id, sync_mode)
         self.keyframes = ([], [], [])
-        self.current_time = 0  # Initialize current time
 
     def think(self, perception):
         target_joints = self.angle_interpolation(self.keyframes, perception)
-        #target_joints['RHipYawPitch'] = target_joints['LHipYawPitch'] # copy missing joint in keyframes
+        if 'LHipYawPitch' in target_joints:
+            target_joints['RHipYawPitch'] = target_joints['LHipYawPitch'] # copy missing joint in keyframes
         self.target_joints.update(target_joints)
         return super(AngleInterpolationAgent, self).think(perception)
 
@@ -101,5 +101,5 @@ class AngleInterpolationAgent(PIDAgent):
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
-    agent.keyframes = hello()  # CHANGE DIFFERENT KEYFRAMES
+    agent.keyframes = leftBackToStand()  # CHANGE DIFFERENT KEYFRAMES
     agent.run()

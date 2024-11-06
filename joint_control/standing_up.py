@@ -16,10 +16,10 @@ class StandingUpAgent(PostureRecognitionAgent):
     def standing_up(self):
         #YOUR CODE HERE
         keyframe_mapping = {
-            'Left': leftBellyToStand(),
-            'Right': rightBellyToStand(),
+            'Left': rightBellyToStand(),
+            'Right': leftBellyToStand(),
             'Back': leftBackToStand(),
-            'Belly': leftBellyToStand()
+            'Belly': rightBellyToStand()
         }
 
         posture = self.posture

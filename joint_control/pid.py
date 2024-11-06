@@ -37,7 +37,7 @@ class PIDController(object):
         # ADJUST PARAMETERS BELOW
 
         delay = 0 # kein delay im mottoren signal (angle(t) = angle(t-1) + speed * dt)
-        self.Kp = 2.0  # Proportionaler Verstärkungsfaktor, 2.0 moderater Wert
+        self.Kp = 5.0  # Proportionaler Verstärkungsfaktor, 2.0 moderater Wert
         self.Ki = 0.1  # Integraler Verstärkungsfaktor, zu hoch führt zu Instabilität
         self.Kd = 0.1  # Differentialer Verstärkungsfaktor, ein zu hoher wert kann das system empfindlich gegenüber messrauschen machen
         self.y = deque(np.zeros(size), maxlen=delay + 1)
@@ -56,22 +56,21 @@ class PIDController(object):
         '''
 
         # YOUR CODE HERE
+        e_t = target - sensor
 
-        prediction = sensor.copy()
-        for _ in range(len(self.y) - 1):
-            prediction += self.u * self.dt  # angle(t) = angle(t-1) + speed * dt
-            self.y.append(prediction)
+        # Integral Term
+        P = self.Kp * e_t
+        I = self.Ki * (e_t + self.e1 + self.e2) * self.dt
+        D = self.Kd * (e_t - self.e1) / self.dt
 
-        error = target - prediction
-        self.integral += error * self.dt
-        derivative = (error - self.e1) / self.dt
 
-        # PID rule
-        self.u = self.Kp * error + self.Ki * self.integral + self.Kd * derivative
+        # PID Regel
+        self.u = P + I + D
 
-        # Vorherige Fehlerwerte aktualisieren
+
         self.e2 = self.e1.copy()
-        self.e1 = error.copy()
+        self.e1 = e_t.copy()
+        self.y.append(sensor + self.u + self.dt)
 
         return self.u
 
