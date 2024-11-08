@@ -25,7 +25,7 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
                  sync_mode=True):
         super(PostureRecognitionAgent, self).__init__(simspark_ip, simspark_port, teamname, player_id, sync_mode)
         self.posture = 'unknown'
-        self.posture_classifier = keras.models.load_model('RoboCup2024\joint_control\robot_pose-clf\clfv1.keras')
+        self.posture_classifier = keras.models.load_model('clfv1.keras')
     def think(self, perception):
         self.posture = self.recognize_posture(perception)
         return super(PostureRecognitionAgent, self).think(perception)

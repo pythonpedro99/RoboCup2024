@@ -38,7 +38,7 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
         # chains defines the name of chain and joints of the chain
         self.chains = {'Head': ['HeadYaw', 'HeadPitch'],
                        # YOUR CODE HERE
-                       'LArm': ['LShoulderPitch', 'LShoulderRoll',' LElbowYaw', 'LElbowRoll', 'LWristYaw2','LHand2'],
+                       'LArm': ['LShoulderPitch', 'LShoulderRoll','LElbowYaw', 'LElbowRoll', 'LWristYaw2','LHand2'],
                        'LLeg': [ 'LHipYawPitch1','LHipRoll', 'LHipPitch','LKneePitch','LAnklePitch', 'RAnkleRoll' ],
                        'RLeg': ['RHipYawPitch1', 'RHipRoll', 'RHipPitch', 'RKneePitch','RAnklePitch','LAnkleRoll' ],
                        'RArm': ['RShoulderPitch', 'RShoulderRoll', 'RElbowYaw', 'RElbowRoll', 'RWristYaw2', 'RHand2']
@@ -124,7 +124,7 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
         T = np.eye(4)
         T[:3, :3] = rotation  # Top-left 3x3 is the rotation matrix
         T[:3, 3] = np.array(translation) / 1000.0  # Top-right 3x1 is the translation vector (converted to meters)
-        print(T)
+        #print(T)
 
         return T
 
@@ -137,29 +137,14 @@ class ForwardKinematicsAgent(PostureRecognitionAgent):
             T = identity(4)
             for joint in chain_joints:
                 angle = joints[joint]
-                Tl = self.local_trans(joint, angle)
+                T_locat = self.local_trans(joint, angle)
                 # YOUR CODE HERE
+                T = T @ T_locat
 
                 self.transforms[joint] = T
 
 if __name__ == '__main__':
     agent = ForwardKinematicsAgent()
-    #agent.run()
-    # Initialize the ForwardKinematicsAgent
-    #agent = ForwardKinematicsAgent()
+    agent.run()
 
-    # Test Cases
-    test_cases = [
-        ('LShoulderPitch', np.radians(45)),  # 45 degrees for Left Shoulder Pitch
-        ('LShoulderYaw', np.radians(30)),  # 30 degrees for Left Shoulder Yaw
-        ('HeadYaw', np.radians(60)),  # 60 degrees for Head Yaw
-        ('LElbowRoll', np.radians(-90)),  # -90 degrees for Left Elbow Roll
-    ]
-
-    # Run Tests
-    for joint_name, joint_angle in test_cases:
-        T = agent.local_trans(joint_name, joint_angle)
-        print(f"Local Transformation for {joint_name} at angle {np.degrees(joint_angle):.2f} degrees:")
-        print(T)
-        print("-" * 50)
 
