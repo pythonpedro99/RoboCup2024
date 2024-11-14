@@ -59,6 +59,7 @@ class ClientAgent(object):
         '''
         # YOUR CODE HERE
 
+
 if __name__ == '__main__':
     agent = ClientAgent()
     # TEST CODE HERE
