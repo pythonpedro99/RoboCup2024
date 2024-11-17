@@ -15,6 +15,9 @@ from numpy.matlib import identity
 import numpy as np
 from scipy.optimize import minimize
 
+from joint_control.keyframes import hello
+
+
 class InverseKinematicsAgent(ForwardKinematicsAgent):
     def inverse_kinematics(self, effector_name, transform):
         '''solve the inverse kinematics
@@ -92,6 +95,7 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
 
 if __name__ == '__main__':
     agent = InverseKinematicsAgent()
+    agent.keyframes = hello()
 
     # Test inverse kinematics with a transformation matrix
     T = np.identity(4)  # Start with an identity matrix
@@ -100,7 +104,7 @@ if __name__ == '__main__':
     T[2, 3] = -0.26  # Z translation (column index 3)
 
     # Call the set_transforms method for the left leg (LLeg)
-    agent.set_transforms('LLeg', T)
+    #agent.set_transforms('LLeg', T)
 
     # Run the agent
     agent.run()

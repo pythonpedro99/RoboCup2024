@@ -107,56 +107,7 @@ class AngleInterpolationAgent(PIDAgent):
                     break
 
         return target_joints
-    '''
-    def angle_interpolation(self, keyframes, perception):
-        joints, times, keys = keyframes
-        target_joints = {}
 
-        if not keys:
-            return target_joints
-        if not times:
-            for i, joint in joints:
-                target_joints[joint] = keys[i]
-
-        # end of the keyframe
-        total_duration = max(max(joint_times) for joint_times in times if joint_times)
-
-        # scale the perception time
-        scaled_perception_time = perception.time % total_duration
-
-        for joint_index, joint_name in enumerate(joints):
-            joint_times = times[joint_index]
-            joint_keys = keys[joint_index]
-
-
-            for i in range(len(joint_times) - 1):
-                t_start = joint_times[i]
-                t_end = joint_times[i + 1]
-                if t_start <= scaled_perception_time <= t_end:
-
-
-                    p0 = joint_keys[i][0]
-
-                    p3 = joint_keys[i + 1][0]
-
-                    if len(joint_keys[i]) >1:
-                        _,_, handle1_angle = joint_keys[i][1]
-                        _,_,handle2_angle = joint_keys[i+1][2]
-                        p1 = p0 + handle1_angle
-                        p2 = p3 + handle2_angle
-                    else:
-                        p1 = p0 + (p3 -p0)
-                        p2 = p3 + (p3 -p0)
-
-                    # normalize time for the interpolation
-                    e_time = scaled_perception_time - t_start
-                    total_time = t_end - t_start
-                    time = e_time / total_time
-                    target_joints[joint_name] = bezier_interpolation(time,p0,p1,p2,p3)
-                    break
-
-        return target_joints
-        '''
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
