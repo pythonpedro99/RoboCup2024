@@ -11,7 +11,7 @@
 
 
 from angle_interpolation import AngleInterpolationAgent
-from joint_control.keyframes import leftBellyToStand
+#from joint_control.keyframes import leftBellyToStand
 from keyframes import hello
 import keras
 import numpy as np

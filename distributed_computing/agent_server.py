@@ -17,10 +17,10 @@ import sys
 import time
 import numpy as np
 from jsonrpclib.SimpleJSONRPCServer import SimpleJSONRPCServer
-from jsonrpclib import Server
+#from jsonrpclib import Server
 import threading
-from joint_control import keyframes
-from joint_control.keyframes import hello
+#from joint_control import keyframes
+#from joint_control.keyframes import hello
 
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'kinematics'))
 

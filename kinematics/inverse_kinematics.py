@@ -15,7 +15,7 @@ from numpy.matlib import identity
 import numpy as np
 from scipy.optimize import minimize
 
-from joint_control.keyframes import hello
+#from joint_control.keyframes import hello
 
 
 class InverseKinematicsAgent(ForwardKinematicsAgent):

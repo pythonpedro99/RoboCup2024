@@ -2,7 +2,8 @@
 
 ```PowerShell
 # activate the env
-./venv/Scripts/Activate
+myenv\Scripts\activate
+
 
 # freeze all packages
 pip freeze > packages.txt

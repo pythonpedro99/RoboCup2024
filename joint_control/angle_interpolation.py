@@ -20,7 +20,7 @@
 '''
 from jedi.inference.recursion import total_function_execution_limit
 
-from joint_control.keyframes import wipe_forehead, rightBackToStand, leftBellyToStand, leftBackToStand
+from keyframes import wipe_forehead, rightBackToStand, leftBellyToStand, leftBackToStand
 from pid import PIDAgent
 from keyframes import hello
 

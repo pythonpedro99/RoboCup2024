@@ -115,20 +115,9 @@ class ClientAgent(object):
 if __name__ == '__main__':
     agent = ClientAgent()
     # TEST CODE HERE
-    T = np.identity(4)  # Start with an identity matrix
-    T[0, 3] = 0.0  # X translation (column index 3)
-    T[1, 3] = 0.05  # Y translation (column index 3)
-    T[2, 3] = -0.26  # Z translation (column index 3)
-    agent.get_angle("HeadYaw")
-    agent.set_angle("HeadYaw", 1.5)
-    agent.get_angle("HeadYaw")
-    agent.get_posture()
-    agent.execute_keyframes(hello())
-    agent.execute_keyframes( ([], [], []))
-    agent.get_transform('HeadYaw')
-    agent.set_transform('LLeg',T)
-    agent.get_transform('HeadYaw')
-    agent.execute_keyframes(leftBackToStand())
+    # for interactive calls run  python -i agent_client.py
+
+
 
 
 
